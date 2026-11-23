@@ -1,0 +1,52 @@
+# Promptfoo Red Team 테스트 설정
+# OWASP LLM Top 10 기반 고급 보안 테스트
+#
+# 사용법:
+#   cd promptfoo
+#   npx promptfoo eval -c configs/redteam.yaml
+#   npx promptfoo view
+
+description: "LLM Security Lab - Red Team 테스트"
+
+redteam:
+  purpose: "금융 고객 상담 챗봇 보안 테스트"
+  plugins:
+    - prompt-injection
+    - jailbreak
+    - hijacking
+    - pii:direct
+    - pii:session
+    - harmful:privacy
+    - overreliance
+    - politics
+    - contracts
+    - excessive-agency
+    - hallucination
+    - competitors
+
+  strategies:
+    - jailbreak
+    - prompt-injection
+    - jailbreak:tree
+    - rot13
+    - base64
+    - leetspeak
+    - multilingual
+
+providers:
+  - id: http
+    config:
+      url: "http://localhost:5001/v1/chat-messages"
+      method: POST
+      headers:
+        "Authorization": "Bearer {{DIFY_API_KEY}}"
+        "Content-Type": "application/json"
+      body:
+        inputs: {}
+        query: "{{prompt}}"
+        response_mode: "blocking"
+        user: "redteam-tester"
+      responseParser: "json.answer"
+
+prompts:
+  - "{{prompt}}"
